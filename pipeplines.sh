@@ -77,9 +77,6 @@ for pipeline in "${pipelines[@]}"; do
         elif [[ $action == "approve" ]]; then
             echo "Approving $env deployment for pipeline with id $pipelineId and name $pipelineName ..."
 
-            pipelineId=$(az rest --uri "$adoBaseUrl/pipelines?api-version=7.1" --resource $resource | jq -c ".value.[] | select( .name == \"$pipeline\" ).id")
-            # echo "pipelineId=$pipelineId"
-
             # find last build, timeline
             build=$(az rest --uri "$adoBaseUrl/build/builds?api-version=7.1&definitions=$pipelineId&queryOrder=startTimeDescending&\$top=1" --resource $resource)
             buildId=$(echo $build | jq -r '.value[0].id')
@@ -104,8 +101,10 @@ for pipeline in "${pipelines[@]}"; do
 
             # find record with parentId == recordId2 && type "Checkpoint.Approval" => appovalId
             approvalId=$(echo $timeline | jq -r ".records[] | select( .parentId == \"$checkpointRecordId\" and .type == \"Checkpoint.Approval\" ).id")
-
-            approvalStatus=$(az rest --uri "$adoBaseUrl/pipelines/approvals/$approvalId?api-version=7.1" --resource $resource | jq -r ".status")
+            # echo "approvalId=$approvalId"
+            approval=$(az rest --uri "$adoBaseUrl/pipelines/approvals/$approvalId?api-version=7.1" --resource $resource)
+            # echo "Approval:\n$approval"
+            approvalStatus=$(echo $approval | jq -r ".status")
 
             if [[ $approvalStatus != "pending" ]]; then
                 echo "Approval $approvalId for stage $deployStageRecordIdentifier for pipeline $pipeline not pending but $approvalStatus, skipping ..."
