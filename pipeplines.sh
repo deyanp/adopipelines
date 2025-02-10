@@ -112,7 +112,8 @@ for pipeline in "${pipelines[@]}"; do
                 echo "Approving stage $deployStageRecordIdentifier for pipeline $pipeline ..."
                 az rest --method PATCH --uri "$adoBaseUrl/pipelines/approvals?api-version=7.1" \
                     --resource $resource \
-                    --body "[ { \"approvalId\":\"$approvalId\", \"comment\":\"cli\", \"status\":\"approved\" } ]"
+                    --body "[ { \"approvalId\":\"$approvalId\", \"comment\":\"cli\", \"status\":\"approved\" } ]" \
+                    > /dev/null
                 echo "Stage $deployStageRecordIdentifier for pipeline $pipeline approved"
             fi
 
