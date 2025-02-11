@@ -51,8 +51,9 @@ for pipeline in "${pipelines[@]}"; do
     fi
     # echo "pipelineIdNames=${pipelineIdNames[@]}"
 
-    echo "Are you sure you want to apply action $action (for env $env) to below pipeline(s)? (y/n)"
+    echo "The following pipelines are matching the mask;"
     printf '%s\n' "${pipelineIdNames[@]}"
+    echo "Are you sure you want to apply action $action to the pipeline(s) above? (y/n)"
     read -r response
     if [[ $response != "y" ]]; then
         echo "Exiting ..."
